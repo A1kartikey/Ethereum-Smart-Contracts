@@ -17,7 +17,7 @@ contract studentDetails{ //contract is a keyword to initiate the contract, follo
 	mapping (address => student) students ;
                 	//mapping is a user defined data type.
     
-	address[]  studentAccts;
+	address[] public studentAccts;
             	//creating a dynamic array to store a students accounts dynamically.
 
     
@@ -30,6 +30,15 @@ contract studentDetails{ //contract is a keyword to initiate the contract, follo
     
 	function insertDetails(address _address,string _sname,string _degree,uint _year,uint _roll)  public{
    	 
+   
+   	 
+    for(uint i=0;i<=studentAccts.length;i++)
+    {
+        if (studentAccts[i] == _address)
+        throw;
+    }
+    
+    
     	students[msg.sender].accountaddress = msg.sender; //msg.sender is current address.students address is added using msg.sender
     	students[msg.sender].sname = _sname;         	//add name; "_sname" gets value from placeholder
     	students[msg.sender].degree = _degree;      	//add degree; "_degree" gets value from placeholder
