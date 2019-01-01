@@ -30,34 +30,32 @@ contract studentDetails{ //contract is a keyword to initiate the contract, follo
     
 	function insertDetails(address _address,string _sname,string _degree,uint _year,uint _roll)  public{
    	 
-   
+   if(studentAccts.length>=1){
    	 
-    for(uint i=0;i<=studentAccts.length;i++)
+    for(uint i=0;i>=studentAccts.length - 1;i++)
     {
         if (studentAccts[i] == _address)
         throw;
     }
     
-    
-    	students[msg.sender].accountaddress = msg.sender; //msg.sender is current address.students address is added using msg.sender
-    	students[msg.sender].sname = _sname;         	//add name; "_sname" gets value from placeholder
-    	students[msg.sender].degree = _degree;      	//add degree; "_degree" gets value from placeholder
-    	students[msg.sender].year = _year;          	//add year; "_year" gets value from placeholder
-    	students[msg.sender].roll = _roll;         	//add roll; "_roll" gets value from placeholder
+   }
+    	students[_address].accountaddress = msg.sender; //msg.sender is current address.students address is added using msg.sender
+    	students[_address].sname = _sname;         	//add name; "_sname" gets value from placeholder
+    	students[_address].degree = _degree;      	//add degree; "_degree" gets value from placeholder
+    	students[_address].year = _year;          	//add year; "_year" gets value from placeholder
+    	students[_address].roll = _roll;         	//add roll; "_roll" gets value from placeholder
    	 
     	studentAccts.push(_address) +1;         	// increment the count of students address by 1
 
 	}
 
-
-    
-	function updatedetails(string _sname, string _degree, uint _year, uint _roll )  public{
+	function updatedetails(address _address,string _sname, string _degree, uint _year, uint _roll )  public{
                 	//function to update the list, of students
    	 
-     	students[msg.sender].sname = _sname;
-     	students[msg.sender].degree = _degree;
-     	students[msg.sender].year = _year;
-     	students[msg.sender].roll = _roll;
+     	students[_address].sname = _sname;
+     	students[_address].degree = _degree;
+     	students[_address].year = _year;
+     	students[_address].roll = _roll;
 	}
     
 	// function to get students details. the details will be displayed with respect to the unique address of students.
@@ -93,8 +91,4 @@ contract studentDetails{ //contract is a keyword to initiate the contract, follo
         	return false;
     	}
 	}
-
-    
 }
-
-
