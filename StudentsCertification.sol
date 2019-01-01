@@ -29,16 +29,7 @@ contract studentDetails{ //contract is a keyword to initiate the contract, follo
         	//function to add students.There are 5 inputs passed into to the function,within the brackets .  
     
 	function insertDetails(address _address,string _sname,string _degree,uint _year,uint _roll)  public{
-   	 
-   if(studentAccts.length>=1){
-   	 
-    for(uint i=0;i>=studentAccts.length - 1;i++)
-    {
-        if (studentAccts[i] == _address)
-        throw;
-    }
-    
-   }
+	    
     	students[_address].accountaddress = msg.sender; //msg.sender is current address.students address is added using msg.sender
     	students[_address].sname = _sname;         	//add name; "_sname" gets value from placeholder
     	students[_address].degree = _degree;      	//add degree; "_degree" gets value from placeholder
