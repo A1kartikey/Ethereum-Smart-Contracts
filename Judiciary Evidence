@@ -1,0 +1,66 @@
+pragma solidity ^0.5.6;
+
+contract judiciary{
+
+    struct evidence {
+        uint id;
+        string firId;
+        string evidencetype;
+        string hashofevidence;
+        string evidencetakenby;
+        string forensicreport;
+        string judeciaryreport;
+    }
+
+    mapping (uint => evidence) evidences; 
+
+    uint[] evedenceIds ;
+
+modifier checkhash(string memory _hashofevidence,uint _Id){
+    require(keccak256(abi.encodePacked(evidences[_Id].hashofevidence)) == keccak256(abi.encodePacked(_hashofevidence)));
+_;
+    
+}
+
+
+function EvidenceCapture(uint _Id,string memory FirId,string memory Evidencetype,string memory Evidencetakenby,string memory HashOfEvidence)public{
+
+    require(evidences[_Id].id != _Id);
+
+    evidences[_Id].id = _Id;
+    evidences[_Id].firId= FirId;
+    evidences[_Id].evidencetype= Evidencetype;
+    evidences[_Id].evidencetakenby= Evidencetakenby;
+    evidences[_Id].hashofevidence= HashOfEvidence;
+    evedenceIds.push(_Id);
+
+    
+}
+
+function insertforensicreport(uint _Id,string memory _forensicreport,string memory _hashofevidence) public checkhash(_hashofevidence,_Id){
+
+      evidences[_Id].forensicreport = _forensicreport; 
+
+}
+
+
+function getevidences(uint _Id) view public returns(uint,string memory,string memory,string memory,string memory,string memory,string memory){
+    return(evidences[_Id].id,evidences[_Id].firId,evidences[_Id].evidencetype, evidences[_Id].evidencetakenby,evidences[_Id].forensicreport,evidences[_Id].judeciaryreport,evidences[_Id].hashofevidence);
+}
+
+function getallevedenceds()view public returns(uint[] memory){
+    return evedenceIds;
+}
+
+function validateevidence(uint _Idunit) view public returns(bool){
+    if ((evidences[_Idunit].id == _Idunit))
+        return true;
+    else 
+        return false;
+}
+
+function insertjudiciaryreport(uint _Id,string memory _judiciaryreport,string memory _hashofevidence)public checkhash(_hashofevidence,_Id) {
+      evidences[_Id].judeciaryreport = _judiciaryreport;
+}
+
+}
