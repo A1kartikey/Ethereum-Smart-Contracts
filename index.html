@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Idealabs Future Tech Veture</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+
+        <h1>Idealabs</h1>
+        
+        <h2 id="instructor"></h2>
+
+        <label for="name" class="col-lg-2 control-label">Instructor Name</label>
+        <input id="name" type="text">
+
+        <label for="name" class="col-lg-2 control-label">Instructor Age</label>
+        <input id="age" type="text">
+
+        <button id="button">Update Instructor</button>
+
+        <button id ="buttonEvent">Button Event </button> 
+
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+       if (typeof web3 !== 'undefined') {
+           web3 = new Web3(web3.currentProvider);
+       } else {
+           web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+       }
+
+       web3.eth.defaultAccount = web3.eth.accounts[0];
+
+       var IdealabsContract = web3.eth.contract([
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"name": "_age",
+				"type": "uint256"
+			}
+		],
+		"name": "setInstructor",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "fname",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "Age",
+				"type": "uint256"
+			}
+		],
+		"name": "Event",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getInstructor",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+
+       var Idealabs = IdealabsContract.at('0x27dd3dd2d1dab55429984e73c4cd7da41bfbc8a2');
+
+       var Event = Idealabs.Event({}, {fromBlock:5317095,toBlock:'latest'});
+
+
+       Idealabs.getInstructor(function(error, result) {
+           if (!error) {
+               $("#instructor").html(result[0]+' ('+result[1]+' years old)');
+           } else
+                console.log(error);
+       });
+
+       $("#buttonEvent").click(function() {
+
+        Event.watch(function(error, result) {
+           if (result) {
+               $("#instructor").html(web3.toAscii(result.args.fname)   + result.args.Age + ' years old)');
+		   console.log('Name: '+result.args.fname);
+		   console.log('Age: '+result.args.Age);
+			
+			
+			} else {
+                $("#loader").hide();
+                }
+            })
+       });
+
+       $("#button").click(function() {
+           Idealabs.setInstructor($("#name").val(), $("#age").val(),(err, res) => {
+               if (err) {
+                   $("#loader").hide();
+               }
+           });
+       });
+
+
+    </script>
+
+</body>
+</html>
