@@ -1,0 +1,153 @@
+pragma solidity^0.4.25;
+
+contract chitfunds{
+    
+    struct chit{
+        
+        uint groupId;
+        address forman;
+        uint durationMon;
+        uint FixedAmount;
+        uint generatedAmount;
+        uint HighestBid;
+        address BidWinner;
+        uint Subscribercount;
+        address[] AllSubscribersAddresses;
+
+    }
+    
+    mapping (uint=>chit)chitfundMap;
+    
+    struct Subscribers {
+        
+        address subscriberAddress;
+        string name;
+        uint groupId;
+        uint Balance;
+        uint BidAmount;
+    } 
+    
+    
+    mapping (address=>Subscribers) SubscribrMap;
+    
+    address[]sublist;
+  
+    uint []planlist;
+   
+    
+    address forman =0xca35b7d915458ef540ade6068dfe2f44e8fa733c;
+   
+   modifier onlyforeman(){
+       require(forman == msg.sender);
+       _;
+   }
+
+
+     function SubscriberForChit(uint _groupId,uint _Balance,address _subscriberAddress,string _name)public{
+
+require( chitfundMap[_groupId].Subscribercount < chitfundMap[_groupId].durationMon);
+     SubscribrMap[_subscriberAddress].groupId=chitfundMap[_groupId].groupId;
+     SubscribrMap[_subscriberAddress].subscriberAddress=_subscriberAddress;
+     SubscribrMap[_subscriberAddress].name=_name;
+     SubscribrMap[_subscriberAddress].Balance += _Balance; 
+     sublist.push(_subscriberAddress);
+     chitfundMap[_groupId].Subscribercount++;
+     chitfundMap[_groupId].AllSubscribersAddresses.push(_subscriberAddress);
+
+     
+     }
+
+     function GetSubscribDetails(address _subscriberId) constant public returns(uint,address,string,uint,uint) {
+        return( SubscribrMap[_subscriberId].groupId,SubscribrMap[_subscriberId].subscriberAddress, SubscribrMap[_subscriberId].name,SubscribrMap[_subscriberId].Balance,SubscribrMap[_subscriberId].BidAmount);
+      }
+
+     function GetAllSubscrib()constant public returns (address[]){
+         return sublist;
+    }
+ 
+ 
+     function addplan(uint _Amount,address _forman, uint _groupId, uint _durationMon) public onlyforeman() {
+       chitfundMap[_groupId].forman=_forman;
+       chitfundMap[_groupId].groupId=_groupId;
+       chitfundMap[_groupId].durationMon=_durationMon;
+       chitfundMap[_groupId].FixedAmount=_Amount;
+       
+       planlist.push(_groupId);
+
+    }
+
+    function GetPlainDetails(uint _groupId) constant public returns(address,uint,uint,uint,uint,uint) {
+        return(chitfundMap[_groupId].forman,chitfundMap[_groupId].groupId,chitfundMap[_groupId].FixedAmount,chitfundMap[_groupId].durationMon,chitfundMap[_groupId].generatedAmount,chitfundMap[_groupId].Subscribercount);
+      }
+    
+    function GetAllplan()constant public returns (uint[]){
+         return planlist;
+    }
+       
+ 
+
+ function Bid(address _subscriberId, uint _BidAmount,uint _groupId) public {
+     SubscribrMap[_subscriberId].BidAmount = _BidAmount;
+     if(SubscribrMap[_subscriberId].BidAmount > chitfundMap[_groupId].HighestBid ){
+         chitfundMap[_groupId].HighestBid = SubscribrMap[_subscriberId].BidAmount;
+         chitfundMap[_groupId].BidWinner = SubscribrMap[_subscriberId].subscriberAddress;
+        
+     }
+ }
+        
+  function GetWinner(uint _groupId) constant public returns(address) {
+        return(chitfundMap[_groupId].BidWinner);
+      }
+      
+    function reward(uint _groupId)  public  { 
+                    removeByValue(chitfundMap[_groupId].BidWinner,_groupId);
+                SubscribrMap[chitfundMap[_groupId].BidWinner].Balance+=chitfundMap[_groupId].generatedAmount - chitfundMap[_groupId].HighestBid;
+                                     
+                                      }
+                                      
+    function monthplay(address _subscriberId,uint _groupId) public{
+                                      
+     SubscribrMap[_subscriberId].Balance-= chitfundMap[_groupId].FixedAmount;
+     chitfundMap[_groupId].generatedAmount+=chitfundMap[_groupId].FixedAmount;
+    }
+
+    function CheckWinnerRewardAmount(uint _groupId)constant public returns(uint) {
+        return(SubscribrMap[chitfundMap[_groupId].BidWinner].Balance)  ;
+    }
+    
+    function GetAllSubscriberOfGroup(uint _groupId) constant public returns(address[]){
+        return chitfundMap[_groupId].AllSubscribersAddresses;
+    }
+    
+    function find(address value,uint _groupId) constant private returns(uint) {
+        uint i = 0;
+        while (chitfundMap[_groupId].AllSubscribersAddresses[i] != value) {
+            i++;
+        }
+        return i;
+    }
+    
+     function removeByValue(address value,uint _groupId) private  {
+        uint i = find(value,_groupId);
+        removeByIndex(i,_groupId);
+    }
+    
+        function removeByIndex(uint i,uint _groupId) private {
+        while (i<chitfundMap[_groupId].AllSubscribersAddresses.length-1) {
+            chitfundMap[_groupId].AllSubscribersAddresses[i] = chitfundMap[_groupId].AllSubscribersAddresses[i+1];
+            i++;
+        }
+        
+        chitfundMap[_groupId].AllSubscribersAddresses.length--;
+    }
+    
+    function RewardAllSubscribers(uint _groupId) public {
+        uint RewardAmountForAll = chitfundMap[_groupId].HighestBid/chitfundMap[_groupId].AllSubscribersAddresses.length;
+        for (uint i  = 0 ;i < chitfundMap[_groupId].AllSubscribersAddresses.length; i++){
+            address _Address = chitfundMap[_groupId].AllSubscribersAddresses[i]  ;
+            SubscribrMap[_Address].Balance += RewardAmountForAll;
+            
+        }
+    }
+
+}
