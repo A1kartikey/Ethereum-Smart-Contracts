@@ -1,21 +1,12 @@
-pragma solidity ^0.4.19;
-import "browser/Students.sol";//include the same file name
-
+pragma solidity ^0.5.1;
+import "browser/students.sol";//include the same file name
 contract Employer{  //contract name
-
-   studentDetails s1 = studentDetails(0x8c6aac465302d9f6262b2907f00c62350cf6fd74);
-                                           	 
-                                            	//s1 is an instance
-                                            	//copy the address of the imported file(students.sol)
-                                           	 
-	function Employer () {	//empty constructor
+   studentDetails s1 = studentDetails (0xef55BfAc4228981E850936AAf042951F7b146e41);//s1 is an instance and copy the address of the imported file(Students_Univrsity.sol.sol)
+constructor  () public {	//empty constructor
 	}
-
-	function checkBgc(address vaddress) constant returns (string){
-        	if(s1.validateStudent(vaddress)){//"validateStudent" is a function in students.sol
-            	return "Valid";
-        	}
-    
+function checkBgc(address vaddress) view public returns (string memory){
+    if(s1.validateStudent(vaddress)){ //"validateStudent" is a function in students.sol
+  	return "Valid";}
     	return "Invalid";
 	}
 }
