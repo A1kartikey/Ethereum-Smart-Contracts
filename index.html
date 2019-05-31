@@ -51,7 +51,7 @@
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_fName",
+				"name": "_name",
 				"type": "string"
 			},
 			{
@@ -64,6 +64,23 @@
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "fname",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "Age",
+				"type": "uint256"
+			}
+		],
+		"name": "Event",
+		"type": "event"
 	},
 	{
 		"constant": true,
@@ -82,27 +99,10 @@
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"name": "fname",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"name": "age",
-				"type": "uint256"
-			}
-		],
-		"name": "Event",
-		"type": "event"
 	}
 ]);
 
-       var Idealabs = IdealabsContract.at('0x49c3bfc6a8e9b09deeef646b51c8b41a926b5ecf');
+       var Idealabs = IdealabsContract.at('0xc458cdf98aaeae710eb349c9ec3f04851e114f7c');
 
        var Event = Idealabs.Event({}, {fromBlock:5409157 ,toBlock:'latest'});
 
