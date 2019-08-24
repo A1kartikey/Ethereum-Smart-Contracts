@@ -1,110 +1,122 @@
 pragma solidity ^0.5.1;
-contract details{
-    struct medicine{
-        uint mid;
-        string name;
-        uint manid;
-        uint disid;
-        uint rid;
-        string mandate; // manfacture date
-        string price;  
-        string expdate;
+
+contract MedicineTraciblity{
+    
+    struct Medicine{
+        uint MedicineId;       
+        string MedicineName;    
+        uint ManufacturerId;
+        uint DistributerId;
+        uint RetailerId;     
+        string ManfacturerDate;
+        string ExpairyDate;
         
-        uint inhandoff;
+        uint InHandOff; //Medicines currently With Whome
     
     }
-    mapping (uint=>medicine)medicines;
-   
-    uint[] stakeholders;
     
     
-    struct manufacturer{ 
-        uint manid;
-        string manname;
-        string mlocation;
-         
-        uint [] medicines;
-                
-    }
-     mapping(uint=>manufacturer)manufacturers;
-    
-    
-     
-    struct distributer { 
-        uint disid;
-        string dname;
-        string dlocation;
-        uint []  medicines ;
+    struct Manufacturer{ 
+        uint    ManufacturerId;
+        string  ManufacturerName;
+        string  ManufacturerLocation;
+        uint [] MedicinesManufactured;
                 
     }
     
-     mapping(uint =>distributer)distributers;
+    struct Distributer { 
+        uint    DistributerId;
+        string  DistributerName;
+        string  DistributerLocation;
+        uint [] MedicinesManufactured ;
+                
+    }
     
-    struct retailer{ 
-        uint rid;
-        string rname;
-        string rlocation;
-        uint[]   medicines;
+    struct Retailer{ 
+        uint    RetailerId;
+        string  RetailerName;
+        string  RetailerLocation;
+        uint[]  MedicinesManufactured;
             
     }
-    mapping(uint =>retailer)retailers;
-
-function productdetails (uint _mid, string memory _name,string memory _mandate,string memory _expdate,string memory _price   )public{
-
-    medicines[_mid].name= _name;
-    medicines[_mid].mandate = _mandate;
-    medicines[_mid].expdate = _expdate;
-    medicines[_mid].price = _price;
     
-}
+    mapping(uint=>Medicine)MedicineMap;
+    mapping(uint=>Manufacturer)ManufacturerMap;
+    mapping(uint =>Distributer)DistributerMap;
+    mapping(uint =>Retailer)RetailerMap;
 
-
-function getdetails ( uint _mid) view public returns (string memory , uint ,uint, uint  ){
-    return ( medicines[_mid].name,   medicines[_mid].manid ,  medicines[_mid].disid, medicines[_mid].rid );
-}
-   function distributerdetails( uint _disid , string memory _dname,string memory _dlocation)public{
-     distributers[_disid].disid=_disid;
-     distributers[_disid].dname=_dname;
-     distributers[_disid].dlocation=_dlocation;
-}  
- function getdistributerdetails(uint _disid) view public returns(uint,string memory,string memory){
-     return(distributers[_disid].disid, distributers[_disid].dname, distributers[_disid].dlocation);
- }
-                
-  
-function manufacturerdetails(uint _manid,string memory _manname,string memory _mlocation)public{
-    manufacturers[_manid].manid=_manid;
-     manufacturers[_manid].manname=_manname;
-     manufacturers[_manid].mlocation=_mlocation;
+function ManufacturerDetails(uint _ManufacturerId,string memory _ManufacturerName,string memory _ManufacturerLocation)public{
+    ManufacturerMap[_ManufacturerId].ManufacturerId=_ManufacturerId;
+    ManufacturerMap[_ManufacturerId].ManufacturerName=_ManufacturerName;
+    ManufacturerMap[_ManufacturerId].ManufacturerLocation=_ManufacturerLocation;
           
-}  
- function getmanufacturerdetails(uint _manid) view public returns(uint,string memory,string memory){
-     return(manufacturers[_manid].manid, manufacturers[_manid].manname, manufacturers[_manid].mlocation);
- }
-  function retdetails(uint _rid,string memory _rname,string memory _rlocation)public{
-     retailers[_rid].rid=_rid;
-     retailers[_rid].rname=_rname;
-     retailers[_rid].rlocation=_rlocation;
-}  
- function getretailerdetails (uint _rid) view public returns(uint,string memory,string memory){
-     return(retailers[_rid].rid, retailers[_rid].rname, retailers[_rid].rlocation);
- }
-                
+}
 
- function mantodis (uint _id , uint _disid , uint _inhandoff ) public {
+  function DistributerDetails( uint _DistributerId , string memory _DistributerName,string memory _DistributerLocation)public{
+     DistributerMap[_DistributerId].DistributerId=_DistributerId;
+     DistributerMap[_DistributerId].DistributerName=_DistributerName;
+     DistributerMap[_DistributerId].DistributerLocation=_DistributerLocation;
+} 
+
+
+
+  function RetailerDetails(uint _RetailerId,string memory _RetailerName,string memory _RetailerLocation)public{
+     RetailerMap[_RetailerId].RetailerId=_RetailerId;
+     RetailerMap[_RetailerId].RetailerName=_RetailerName;
+     RetailerMap[_RetailerId].RetailerLocation=_RetailerLocation;
+}
+
+
+    
+function MoveToManufacturer (uint _MedicineId, string memory _MedicineName,string memory _ExpairyDate,string memory _ManfacturerDate,uint _ManufacturerId)public{
+
+    MedicineMap[_MedicineId].MedicineId= _MedicineId;
+    MedicineMap[_MedicineId].MedicineName = _MedicineName;
+    MedicineMap[_MedicineId].ExpairyDate = _ExpairyDate;
+    MedicineMap[_MedicineId].ManfacturerDate = _ManfacturerDate;
+    MedicineMap[_MedicineId].ManufacturerId=_ManufacturerId;
+    MedicineMap[_MedicineId].InHandOff = _ManufacturerId;
+    ManufacturerMap[_ManufacturerId].MedicinesManufactured.push(_MedicineId); 
+}
+
+function MoveToDistributer (uint _MedicineId , uint _DistributerId  ) public {
      
-     medicines[_id].inhandoff = _disid;
-     distributers[_id].medicines.push(_disid);
+     MedicineMap[_MedicineId].InHandOff = _DistributerId;
+     MedicineMap[_MedicineId].DistributerId = _DistributerId;
+     DistributerMap[_MedicineId].MedicinesManufactured.push(_MedicineId);
      
  }
  
-
-
-function distoret (uint _id,uint _rid,uint _inhandoff ) public {
-    medicines[_id].inhandoff = _rid;
-     retailers[_id].medicines.push(_rid);
+function MoveToRetailer (uint _MedicineId ,uint _RetailerId ) public {
+    MedicineMap[_MedicineId].InHandOff = _RetailerId;
+    MedicineMap[_MedicineId].RetailerId = _RetailerId;
+    RetailerMap[_RetailerId].MedicinesManufactured.push(_MedicineId);
 }
-function getinhandoff (uint _id) view public returns( uint ){
-  return (medicines[_id].mid);
-} 
+
+
+
+function GetMedicineDetails ( uint _MedicineId) view public returns (uint , string memory,uint, uint,uint,string memory,string memory  ){
+    return ( MedicineMap[_MedicineId].MedicineId,   MedicineMap[_MedicineId].MedicineName ,  MedicineMap[_MedicineId].ManufacturerId, MedicineMap[_MedicineId].DistributerId,MedicineMap[_MedicineId].RetailerId,MedicineMap[_MedicineId].ExpairyDate,MedicineMap[_MedicineId].ManfacturerDate );
+}
+ 
+  
+ function GetManufacturerDetails(uint _ManufacturerId) view public returns(uint,string memory,string memory){
+     return(ManufacturerMap[_ManufacturerId].ManufacturerId, ManufacturerMap[_ManufacturerId].ManufacturerName, ManufacturerMap[_ManufacturerId].ManufacturerLocation);
+ } 
+
+ function GetDistributerDetails(uint _DistributerId) view public returns(uint,string memory,string memory){
+     return(DistributerMap[_DistributerId].DistributerId, DistributerMap[_DistributerId].DistributerName, DistributerMap[_DistributerId].DistributerLocation);
+ }
+                
+  
+ function GetRetailerDetails (uint _RetailerId) view public returns(uint,string memory,string memory){
+     return(RetailerMap[_RetailerId].RetailerId, RetailerMap[_RetailerId].RetailerName, RetailerMap[_RetailerId].RetailerLocation);
+ }
+                
+
+function GetInHandoff (uint _MedicineId) view public returns( uint ){
+  return (MedicineMap[_MedicineId].InHandOff);
+    } 
+
+    
 }
