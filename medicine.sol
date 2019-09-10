@@ -44,6 +44,8 @@ contract MedicineTraciblity{
     mapping(uint=>Manufacturer)ManufacturerMap;
     mapping(uint =>Distributer)DistributerMap;
     mapping(uint =>Retailer)RetailerMap;
+    
+    uint[] Medicines;
 
 function ManufacturerDetails(uint _ManufacturerId,string memory _ManufacturerName,string memory _ManufacturerLocation)public{
     ManufacturerMap[_ManufacturerId].ManufacturerId=_ManufacturerId;
@@ -77,6 +79,7 @@ function MoveToManufacturer (uint _MedicineId, string memory _MedicineName,strin
     MedicineMap[_MedicineId].ManufacturerId=_ManufacturerId;
     MedicineMap[_MedicineId].InHandOff = _ManufacturerId;
     ManufacturerMap[_ManufacturerId].MedicinesManufactured.push(_MedicineId); 
+    Medicines.push(_MedicineId);
 }
 
 function MoveToDistributer (uint _MedicineId , uint _DistributerId  ) public {
@@ -117,6 +120,10 @@ function GetMedicineDetails ( uint _MedicineId) view public returns (uint , stri
 function GetInHandoff (uint _MedicineId) view public returns( uint ){
   return (MedicineMap[_MedicineId].InHandOff);
     } 
+    
+function GetAllMedicines() view public returns (uint[] memory){
+    return Medicines;
+}
 
     
 }
