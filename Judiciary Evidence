@@ -1,66 +1,74 @@
-pragma solidity ^0.5.6;
+pragma solidity ^0.5.1;
 
-contract judiciary{
+contract judiciaryDetails{ 
 
-    struct evidence {
-        uint id;
-        string firId;
-        string evidencetype;
-        string hashofevidence;
-        string evidencetakenby;
-        string forensicreport;
-        string judeciaryreport;
+struct judiciary { 
+    uint id;
+    string evidencetakenby ;
+    string evedencetype;
+    string hash;
+    string reportofforiensic;
+    string investigationagency;
+    string reportofjudge;
+}
+
+modifier HashCheck(uint _id, string memory _hash) {
+ require(keccak256(abi.encodePacked((judiciarys[_id].hash))) == keccak256(abi.encodePacked((_hash))) );
+    _;//go the next line
+}
+
+uint[] ListOfevidence;
+
+ mapping(uint => judiciary)judiciarys;
+ 
+function CapturingEvedence(uint _id,string memory _evidencetakenby,string memory _hash,string memory _evedencetype)  public {
+   if (ValidateEvedence(_id) != true){ 
+    judiciarys[_id].id = _id;
+    judiciarys[_id].hash = _hash;
+    judiciarys[_id].evedencetype = _evedencetype;
+    judiciarys[_id].evidencetakenby = _evidencetakenby;
+    ListOfevidence.push(_id);
+   }
+}
+
+function ForiensiesReport(uint _id,string memory _report, string memory _hash)  public HashCheck(_id,_hash) {
+    
+  if (ValidateEvedence(_id)){
+   judiciarys[_id].reportofforiensic = _report;
+  }
+}
+
+function Investigationagency(uint _id,string memory _report,string memory _hash) public HashCheck(_id,_hash){
+
+   if (ValidateEvedence(_id)){
+   judiciarys[_id].investigationagency = _report;
+
+   }
+   }
+function judgeReport(uint _id,string memory _report,string memory _hash) public HashCheck(_id,_hash){
+    if (ValidateEvedence(_id)){
+       judiciarys[_id].reportofjudge = _report;
     }
+}
 
-    mapping (uint => evidence) evidences; 
-
-    uint[] evedenceIds ;
-
-modifier checkhash(string memory _hashofevidence,uint _Id){
-    require(keccak256(abi.encodePacked(evidences[_Id].hashofevidence)) == keccak256(abi.encodePacked(_hashofevidence)));
-_;
+    function getjudiciary(uint _id) view public returns(uint,string memory,string memory,string memory,string memory) {
+        
+    return (judiciarys[_id].id,judiciarys[_id].evidencetakenby,judiciarys[_id].reportofforiensic,judiciarys[_id].investigationagency,judiciarys[_id].reportofjudge);  
+    }
     
-}
-
-
-function EvidenceCapture(uint _Id,string memory FirId,string memory Evidencetype,string memory Evidencetakenby,string memory HashOfEvidence)public{
-
-    require(evidences[_Id].id != _Id);
-
-    evidences[_Id].id = _Id;
-    evidences[_Id].firId= FirId;
-    evidences[_Id].evidencetype= Evidencetype;
-    evidences[_Id].evidencetakenby= Evidencetakenby;
-    evidences[_Id].hashofevidence= HashOfEvidence;
-    evedenceIds.push(_Id);
-
+    function GellAllEvidenceId() view public returns (uint[] memory) {
+        return ListOfevidence;
+    }
     
-}
-
-function insertforensicreport(uint _Id,string memory _forensicreport,string memory _hashofevidence) public checkhash(_hashofevidence,_Id){
-
-      evidences[_Id].forensicreport = _forensicreport; 
-
-}
-
-
-function getevidences(uint _Id) view public returns(uint,string memory,string memory,string memory,string memory,string memory,string memory){
-    return(evidences[_Id].id,evidences[_Id].firId,evidences[_Id].evidencetype, evidences[_Id].evidencetakenby,evidences[_Id].forensicreport,evidences[_Id].judeciaryreport,evidences[_Id].hashofevidence);
-}
-
-function getallevedenceds()view public returns(uint[] memory){
-    return evedenceIds;
-}
-
-function validateevidence(uint _Idunit) view public returns(bool){
-    if ((evidences[_Idunit].id == _Idunit))
+    function ValidateEvedence(uint _id) view public returns(bool){
+        
+        if (judiciarys[_id].id == _id){
         return true;
-    else 
-        return false;
-}
-
-function insertjudiciaryreport(uint _Id,string memory _judiciaryreport,string memory _hashofevidence)public checkhash(_hashofevidence,_Id) {
-      evidences[_Id].judeciaryreport = _judiciaryreport;
-}
-
-}
+        }
+        
+        else {
+            return false;
+        }
+    }
+    
+}  
