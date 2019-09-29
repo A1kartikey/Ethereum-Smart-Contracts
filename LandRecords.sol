@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.5.1;
 
 contract Land {
     
@@ -14,7 +14,7 @@ contract Land {
     
     address Registrar;
     
-    constructor(){
+    constructor() public {
         
         Registrar = msg.sender;
     }
@@ -36,23 +36,23 @@ contract Land {
     event Deal(address PreviousOwner, address NewOwner,  uint LandID,bool Availability,uint prise);
     
     
-    function GetAlllandsIds() constant public returns(uint[]){
+    function GetAlllandsIds() view public returns(uint[] memory){
         return(landids);
     }
     
-    function isLandAvaliable(uint Landid) constant public returns (bool){
+    function isLandAvaliable(uint Landid) view public returns (bool){
         
         return (Lands[Landid].isAvaliable);
         
     }
     
-    function WhoIsTheofOwner(uint Landid)constant public returns (address){
+    function WhoIsTheofOwner(uint Landid)view public returns (address){
         
         return Lands[Landid].owner;
         
     }
     
-    function PriseOfLand(uint Landid)constant public returns(uint){
+    function PriseOfLand(uint Landid)view public returns(uint){
         
         return Lands[Landid].Prise;
     }
@@ -62,8 +62,8 @@ contract Land {
      
      for(uint i=0; i<=landids.length;i++){
          
-         if(_Id == Lands[_Id].Id)
-         throw;
+         require(_Id != Lands[_Id].Id);
+         
      }
      
       Lands[_Id].owner = _owner;
@@ -77,7 +77,7 @@ contract Land {
     }    
     
     
-    function SetMyNewLandPrice(uint _id,uint NewPrise,bool currentStateOfLand) constant public returns(bool,uint,bool){
+    function SetMyNewLandPrice(uint _id,uint NewPrise,bool currentStateOfLand)  public returns(bool,uint,bool){
         
         require(Lands[_id].owner == msg.sender);
         Lands[_id].Prise = NewPrise;
@@ -100,7 +100,7 @@ contract Land {
     }
     
     
-    function LandDetails(uint _landid) constant public returns (address,bool,uint){
+    function LandDetails(uint _landid) view public returns (address,bool,uint){
     
     return (Lands[_landid].owner,Lands[_landid].isAvaliable,Lands[_landid].Prise );   
         
