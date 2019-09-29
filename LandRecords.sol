@@ -7,7 +7,7 @@ contract Land {
         
         address owner;
         bool isAvaliable;
-        uint Id;
+        uint SurveyId;
         uint Prise;
         
     }
@@ -21,7 +21,7 @@ contract Land {
     
     mapping(uint => land) Lands;
     
-    uint[] public landids;
+    uint[] public SurveyIds;
     
     
     modifier RegistrarOnly(){
@@ -37,72 +37,72 @@ contract Land {
     
     
     function GetAlllandsIds() view public returns(uint[] memory){
-        return(landids);
+        return(SurveyIds);
     }
     
-    function isLandAvaliable(uint Landid) view public returns (bool){
+    function isLandAvaliable(uint SurveyId) view public returns (bool){
         
-        return (Lands[Landid].isAvaliable);
-        
-    }
-    
-    function WhoIsTheofOwner(uint Landid)view public returns (address){
-        
-        return Lands[Landid].owner;
+        return (Lands[SurveyId].isAvaliable);
         
     }
     
-    function PriseOfLand(uint Landid)view public returns(uint){
+    function WhoIsTheofOwner(uint SurveyId)view public returns (address){
         
-        return Lands[Landid].Prise;
+        return Lands[SurveyId].owner;
+        
+    }
+    
+    function PriseOfLand(uint SurveyId)view public returns(uint){
+        
+        return Lands[SurveyId].Prise;
     }
     
     
-     function NewLandRegistry( address _owner,bool _isAvaliable,uint _Id,uint _Prise) RegistrarOnly public  {
+     function NewLandRegistry( address _owner,bool _isAvaliable,uint _SurveyId,uint _Prise) RegistrarOnly public  {
      
-     for(uint i=0; i<=landids.length;i++){
+     for(uint i=0; i<=SurveyIds.length;i++){
          
-         require(_Id != Lands[_Id].Id);
+         require(_SurveyId != Lands[_SurveyId].SurveyId);
          
      }
      
-      Lands[_Id].owner = _owner;
-      Lands[_Id].isAvaliable = _isAvaliable;
-      Lands[_Id].Id = _Id;
-      Lands[_Id].Prise=_Prise;
+      Lands[_SurveyId].owner = _owner;
+      Lands[_SurveyId].isAvaliable = _isAvaliable;
+      Lands[_SurveyId].SurveyId = _SurveyId;
+      Lands[_SurveyId].Prise=_Prise;
 
-      landids.push(_Id) + 1;
+      SurveyIds.push(_SurveyId) + 1;
       
-      emit landOwned (_owner,_Id,_isAvaliable,_Prise);
+      emit landOwned (_owner,_SurveyId,_isAvaliable,_Prise);
     }    
     
     
-    function SetMyNewLandPrice(uint _id,uint NewPrise,bool currentStateOfLand)  public returns(bool,uint,bool){
+    function SetMyNewLandPrice(uint _SurveyId,uint NewPrise,bool currentStateOfLand)  public returns(bool,uint,bool){
         
-        require(Lands[_id].owner == msg.sender);
-        Lands[_id].Prise = NewPrise;
-        Lands[_id].isAvaliable = currentStateOfLand;
+        require(Lands[_SurveyId].owner == msg.sender);
+        Lands[_SurveyId].Prise = NewPrise;
+        Lands[_SurveyId].isAvaliable = currentStateOfLand;
         
-        return(true,Lands[_id].Prise,Lands[_id].isAvaliable);
+        return(true,Lands[_SurveyId].Prise,Lands[_SurveyId].isAvaliable);
     }
     
-    function SellLand(uint landId,address _owner, bool _isAvaliable, uint PayingPrise ) payable public  returns (bool) {
+    function SellLand(uint _SurveyId,address _owner, bool _isAvaliable, uint PayingPrise ) payable public  returns (bool) {
     
-    require(Lands[landId].owner == msg.sender && Lands[landId].Prise <= PayingPrise && Lands[landId].isAvaliable == true);
+    require(Lands[_SurveyId].owner == msg.sender && Lands[_SurveyId].Prise <= PayingPrise && Lands[_SurveyId].isAvaliable == true);
     
-    Lands[landId].owner = _owner;
-    Lands[landId].isAvaliable = _isAvaliable;
-    Lands[landId].Prise = PayingPrise;    
+    Lands[_SurveyId].owner = _owner;
+    Lands[_SurveyId].isAvaliable = _isAvaliable;
+    Lands[_SurveyId].Prise = PayingPrise;    
 
-    emit Deal(msg.sender,_owner,landId,_isAvaliable,PayingPrise);
+    emit Deal(msg.sender,_owner,_SurveyId,_isAvaliable,PayingPrise);
     return true;
 
     }
     
     
-    function LandDetails(uint _landid) view public returns (address,bool,uint){
+    function LandDetails(uint _SurveyId) view public returns (address,bool,uint){
     
-    return (Lands[_landid].owner,Lands[_landid].isAvaliable,Lands[_landid].Prise );   
+    return (Lands[_SurveyId].owner,Lands[_SurveyId].isAvaliable,Lands[_SurveyId].Prise );   
         
     }
         
