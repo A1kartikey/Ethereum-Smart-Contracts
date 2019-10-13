@@ -46,32 +46,45 @@ contract MedicineTraciblity{
     mapping(uint =>Retailer)RetailerMap;
     
     uint[] Medicines;
+    uint[] ManufacturerList;
+    uint[] DistributerList;
+    uint[] RetailerList;
+    
 
 function ManufacturerDetails(uint _ManufacturerId,string memory _ManufacturerName,string memory _ManufacturerLocation)public{
+    require(ManufacturerMap[_ManufacturerId].ManufacturerId != _ManufacturerId);
     ManufacturerMap[_ManufacturerId].ManufacturerId=_ManufacturerId;
     ManufacturerMap[_ManufacturerId].ManufacturerName=_ManufacturerName;
     ManufacturerMap[_ManufacturerId].ManufacturerLocation=_ManufacturerLocation;
+    ManufacturerList.push(_ManufacturerId);
           
 }
 
   function DistributerDetails( uint _DistributerId , string memory _DistributerName,string memory _DistributerLocation)public{
+     require(DistributerMap[_DistributerId].DistributerId != _DistributerId);
      DistributerMap[_DistributerId].DistributerId=_DistributerId;
      DistributerMap[_DistributerId].DistributerName=_DistributerName;
      DistributerMap[_DistributerId].DistributerLocation=_DistributerLocation;
-} 
+
+      DistributerList.push(_DistributerId);
+  } 
 
 
 
   function RetailerDetails(uint _RetailerId,string memory _RetailerName,string memory _RetailerLocation)public{
+     require(RetailerMap[_RetailerId].RetailerId != _RetailerId);
      RetailerMap[_RetailerId].RetailerId=_RetailerId;
      RetailerMap[_RetailerId].RetailerName=_RetailerName;
      RetailerMap[_RetailerId].RetailerLocation=_RetailerLocation;
-}
+
+      RetailerList.push(_RetailerId);
+  }
 
 
     
 function MoveToManufacturer (uint _MedicineId, string memory _MedicineName,string memory _ExpairyDate,string memory _ManfacturerDate,uint _ManufacturerId)public{
 
+    require(MedicineMap[_MedicineId].MedicineId != _MedicineId);
     MedicineMap[_MedicineId].MedicineId= _MedicineId;
     MedicineMap[_MedicineId].MedicineName = _MedicineName;
     MedicineMap[_MedicineId].ExpairyDate = _ExpairyDate;
@@ -84,9 +97,10 @@ function MoveToManufacturer (uint _MedicineId, string memory _MedicineName,strin
 
 function MoveToDistributer (uint _MedicineId , uint _DistributerId  ) public {
      
+    
      MedicineMap[_MedicineId].InHandOff = _DistributerId;
      MedicineMap[_MedicineId].DistributerId = _DistributerId;
-     DistributerMap[_MedicineId].MedicinesManufactured.push(_MedicineId);
+     DistributerMap[_DistributerId].MedicinesManufactured.push(_MedicineId);
      
  }
  
@@ -125,5 +139,16 @@ function GetAllMedicines() view public returns (uint[] memory){
     return Medicines;
 }
 
+function GetAllManufacturer() view public returns(uint[] memory){
+    return ManufacturerList;
+}
+
+function GetAllRetailer() view public returns(uint[] memory){
+    return RetailerList;
+    }     
+    
+function GetAllDistributer() view public returns(uint[] memory){
+    return DistributerList;
+}    
     
 }
