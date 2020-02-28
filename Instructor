@@ -1,0 +1,23 @@
+pragma solidity ^0.5.1;
+
+contract Instructor {
+    
+   string Name;
+   uint age;
+
+event  Event(string Iname,uint Iage);
+
+
+   function setInstructor(string memory _Name, uint _age) public {
+       Name = _Name;
+       age = _age;
+     
+       emit Event (_Name,_age);
+
+   }
+   
+   function getInstructor() view public returns (string memory, uint) {
+       return (Name, age);
+   }
+   
+}
