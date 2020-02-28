@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Idealabs Future Tech Venture</title>
+    <title>Ethereum frontend</title>
 
     <link rel="stylesheet" type="text/css" href="main.css">
 
@@ -16,7 +16,7 @@
 <body>
     <div class="container">
 
-        <h1>Idealabs</h1>
+        <h1>Instructor Information </h1>
       
         <h2 id="instructor"></h2>
 
@@ -26,7 +26,9 @@
         <label for="name" class="col-lg-2 control-label">Instructor Age</label>
         <input id="age" type="text">
 
-        <button id="button">Update Instructor</button>
+		<button id="button_setInstructor">Update Instructor</button>
+		
+		<button id="button_getInstructor">Get Instructor</button>
 
         <button id="buttonEvent">Event</button>
         
@@ -42,16 +44,19 @@
            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
        }
 
+	
+       web3.eth.defaultAccount = web3.eth.accounts[0];	    
 
 
-       web3.eth.defaultAccount = web3.eth.accounts[0];
+	   console.log(web3.eth.accounts[0]);
+	   console.log(web3.eth.Balance);
 
-       var IdealabsContract = web3.eth.contract([
+       var InstructorContract = web3.eth.contract([
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"name": "_name",
+				"name": "_Name",
 				"type": "string"
 			},
 			{
@@ -70,12 +75,12 @@
 		"inputs": [
 			{
 				"indexed": false,
-				"name": "fname",
+				"name": "Iname",
 				"type": "string"
 			},
 			{
 				"indexed": false,
-				"name": "Age",
+				"name": "Iage",
 				"type": "uint256"
 			}
 		],
@@ -102,20 +107,23 @@
 	}
 ]);
 
-       var Idealabs = IdealabsContract.at('0xc458cdf98aaeae710eb349c9ec3f04851e114f7c');
+       var Instructor = InstructorContract.at('0x7795f301089D653358C1834C21FC474B620F9e7a');
 
-       var Event = Idealabs.Event({}, {fromBlock:5409157 ,toBlock:'latest'});
+       var Event = Instructor.Event({}, {fromBlock:7421045  ,toBlock:'latest'});
 
-       Idealabs.getInstructor(function(error, result) {
+	   $("#button_getInstructor").click(function() {
+
+		Instructor.getInstructor(function(error, result) {
            if (!error) {
                $("#instructor").html(result[0]+' ('+result[1]+' years old)');
            } else
                 console.log(error);
-       });
+	   });
+	});
 
-       $("#button").click(function() {
+       $("#button_setInstructor").click(function() {
            
-        Idealabs.setInstructor($("#name").val(), $("#age").val(), (err, res) => {
+        Instructor.setInstructor($("#name").val(), $("#age").val(), (err, res) => {
         if (err){
             console.log(err);
             }    
@@ -132,7 +140,7 @@
 		   console.log('Age: '+result.args.age);
 			
 			} else {
-                $("#loader").hide();
+                console.log(error);
                 }
             })
        });
