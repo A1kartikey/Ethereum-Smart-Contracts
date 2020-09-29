@@ -1,38 +1,90 @@
-pragma solidity^0.5.1;
+pragma solidity^0.5.5;
 
-contract Vote{
+contract VoteSystem{
+
+ struct candidate {
+     uint voterId;
+     string name;
+     uint age;
+     uint voteCount;
+ }
+ 
+ mapping (uint => candidate) candidateMap;
+ 
+ struct voters {
+     uint voterId;
+     string name;
+     uint age;
+     bool votingState;
+ }
+
+ mapping (uint => voters) votersMap;
+ 
+ modifier checkVoterVoted(uint _votersVoterId){
+     require (votersMap[_votersVoterId].votingState == false);
+     _;
+ }
+
+
+uint[] voterIdlist;
+uint[] candidateIdList;
+
+
+ function enrollCandidate(uint _voterId,string memory _name,uint  _age )  public {
+
+ require (_age >= 25); 
+ require (candidateMap[_voterId].voterId != _voterId);
+
+    candidateMap[_voterId].voterId = _voterId;
+    candidateMap[_voterId].name = _name;
+    candidateMap[_voterId].age = _age;
     
-    uint[]  candidateList;
-    
-      mapping (uint => uint)  votesReceived;
+    candidateIdList.push(_voterId);
+ } 
 
+ function enrollVoter(uint _voterId,string memory _name,uint _age)  public {
 
-    function List (uint _id) public {
-        
-        candidateList.push(_id) ;
+require (_age >= 18);
+require (votersMap[_voterId].voterId != _voterId);
+
+     votersMap[_voterId].voterId = _voterId;
+     votersMap[_voterId].name = _name;
+     votersMap[_voterId].age = _age;
+     
+     voterIdlist.push(_voterId);
+ }
+ 
+ function getCandidateDetails(uint _voterId) view public returns(uint,string memory,uint,uint) {
+
+     return (candidateMap[_voterId].voterId,candidateMap[_voterId].name,candidateMap[_voterId].age,candidateMap[_voterId].voteCount);
+ }
+ 
+ function getVoterDetails(uint _voterId) view public returns (uint,string memory,uint,bool){
+     
+     return (votersMap[_voterId].voterId,votersMap[_voterId].name,votersMap[_voterId].age,votersMap[_voterId].votingState);
+     
+ }
+ 
+ function vote(uint _candidateVoterId,uint _votersVoterId) public checkVoterVoted(_votersVoterId) {
+     candidateMap[_candidateVoterId].voteCount += 1;
+     votersMap[_votersVoterId].votingState = true;
+ }
+ 
+ function getVotecountOf(uint _voterId) view public returns(uint){
+     return candidateMap[_voterId].voteCount;
+ }
+ 
+ function getVoterList() view public returns (uint[] memory){
+
+    return   voterIdlist;  
     }
-
-
-    function printList()view  public returns (uint[] memory){
-        
-        return candidateList;
-    }    
     
-    function voteForCandidate(uint candidate) public {
-    votesReceived[candidate] += 1;
-  }
+ function getCandidateList() view public returns(uint[] memory){
+     
+ 
+ return candidateIdList;    
+ }   
 
-    function totalVotesFor(uint candidate) view  public returns (uint) {
-    return votesReceived[candidate];
-  }
-    
-    function validCandidate(uint candidate) view  public returns (bool) {
-    for(uint i = 0; i < candidateList.length; i++) {
-      if (candidateList[i] == candidate) {
-        return true;
-      }
-    }
-    return false;
-  }
     
 }
+
