@@ -1,0 +1,53 @@
+pragma solidity^0.5.1;
+contract IpProd{
+    struct IpProduct{
+        string hashvalue;
+        string hash;
+        string owner;
+        string uid;
+        string name;
+        string date;
+    }
+    address owner;
+    
+    constructor () public {  //constructor is a function which runs only once,at the time of deployment.
+        owner = msg.sender;  //And this constructor stores current address to the verialbe "owner". 
+    
+    }
+    modifier ifOwner() { //modefire is a set of instructions which is executed before the functions where it is specified   
+
+    	require (owner == msg.sender); //require is a keyword which is similar to "if else".It requires less gas compared to "if".
+        	_;
+    }
+    
+    mapping(address => IpProduct) IpProducts;
+    address[] Ipaccts;
+    
+    function setIp(address _addr,string memory _hash,string memory _owner,string memory _uid,string memory _name,string memory _date)public{
+        //var IpProduct=IpProducts[_addr];
+        IpProducts[_addr].hash=_hash;
+        IpProducts[_addr].owner=_owner;
+        IpProducts[_addr].uid=_uid;
+        IpProducts[_addr].name=_name;
+        IpProducts[_addr].date=_date;
+        Ipaccts.push(_addr) +1;
+        
+    }
+
+    
+    function getIp(address _addr) view public returns(string memory,string memory,string memory,string memory,string memory){
+        return (IpProducts[_addr].hash,IpProducts[_addr].owner,IpProducts[_addr].uid,IpProducts[_addr].name,IpProducts[_addr].date);
+    }
+    
+    function hashcompare(address _addr,string memory nhash)view public returns(string memory){
+        if( keccak256(abi.encodePacked(IpProducts[_addr].hash)) == keccak256(abi.encodePacked(nhash)))
+            return "VALID";
+            else
+            return "INVALID";
+    }
+    function updateOwnerShip(address _addr,string memory _owner,string memory _date)public ifOwner{
+        IpProducts[_addr].owner=_owner;
+        IpProducts[_addr].date=_date;
+    }
+    
+}
