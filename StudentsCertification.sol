@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1; //pragma is here to specify the version of compiler we are using
+pragma solidity ^0.8.3; //pragma is here to specify the version of compiler we are using
 
 contract studentDetails{ //contract is a keyword to initiate the contract, followed by contract name.
 
@@ -31,12 +31,13 @@ struct student { // structure is a user defined data type. it starts with "struc
 
 function insertDetails(address _address,string memory _sname,string memory _degree,uint _year,uint _roll)  public ifOwner {
             //function to add students. Before this function the prgram will check for modifies as mentioned above.
+    	require(students[_address].accountaddress != _address );
     	students[_address].accountaddress = _address;
     	students[_address].sname = _sname;
     	students[_address].degree = _degree;
     	students[_address].year = _year;
     	students[_address].roll = _roll;
-    	studentAccts.push(_address) +1;
+    	studentAccts.push(_address) ;
 	}
 
 
@@ -76,5 +77,4 @@ function insertDetails(address _address,string memory _sname,string memory _degr
     	}
 	}   
 }
-
 
