@@ -1,0 +1,89 @@
+pragma solidity ^0.8.9 ; 
+
+contract medicalRecords {
+    
+    
+    struct doctorDetails{
+         
+        string name ; 
+        uint doctorid ; 
+        
+    }
+    
+    mapping(uint => doctorDetails) MapDoctorDetail ;
+ 
+    struct patientDetails {
+        
+         uint patientId ;
+         uint assigndoctor ;
+         string dob ;
+         string report ;
+         string symptoms ;
+         uint testid  ; 
+         string testreport ;
+         bool testapprove ; 
+    }
+    
+    mapping( uint => patientDetails  ) MapPatientDetails  ;
+    
+    function enrollDoctor(string memory _name , uint _doctorid  ) public {
+    
+    require(MapDoctorDetail[_doctorid].doctorid  != _doctorid ) ;     
+    
+     MapDoctorDetail[_doctorid].doctorid = _doctorid ; 
+     MapDoctorDetail[_doctorid].name = _name ; 
+        
+    }
+     
+    function getDoctorDetails(uint _id) view public returns (uint , string memory) {
+        
+        return (MapDoctorDetail[_id].doctorid , MapDoctorDetail[_id].name );
+        
+    } 
+    
+    function enrollPatient(uint _patientId, string memory _dob , string memory _symptoms, uint _assigndoctor,string memory _report) public {
+      require(MapPatientDetails[_patientId].patientId != _patientId);
+        MapPatientDetails[_patientId].patientId = _patientId ;  
+        MapPatientDetails[_patientId].dob = _dob ; 
+        MapPatientDetails[_patientId].symptoms = _symptoms ;
+        MapPatientDetails[_patientId].assigndoctor  = _assigndoctor ;
+         MapPatientDetails[_patientId].report  = _report;
+        
+        
+    } 
+    
+    function approveTest( uint _doctorid , uint _patientId , uint _testid ) public {
+                require(MapPatientDetails[_patientId].assigndoctor == _doctorid);
+                MapPatientDetails[_patientId].testapprove = true ;  
+                MapPatientDetails[_patientId].testid = _testid ;
+                
+    }
+    
+    function testResult(uint _patientId , uint _testid , string memory _testreport ) public {
+        
+        require(MapPatientDetails[_patientId].testapprove == true && MapPatientDetails[_patientId].testid == _testid) ;
+        MapPatientDetails[_patientId].testreport  = _testreport ; 
+        
+    }
+    
+    function updatePatientRecord(uint _patientId , uint _doctorid , string memory _report) public {
+        require( MapPatientDetails[_patientId].assigndoctor == _doctorid );
+        MapPatientDetails[_patientId].report = _report ;
+    }
+    
+    function getPatientDetails(uint _patientId ) view public returns(   uint  , string memory , string memory , string memory ,uint, string memory ,bool ){
+    
+    return ( 
+             MapPatientDetails[_patientId].assigndoctor ,
+             MapPatientDetails[_patientId].dob,
+             MapPatientDetails[_patientId].report,
+             MapPatientDetails[_patientId].symptoms,
+             MapPatientDetails[_patientId].testid,
+             MapPatientDetails[_patientId].testreport ,
+             MapPatientDetails[_patientId].testapprove
+ ) ;
+            
+         
+    }
+} 
+
