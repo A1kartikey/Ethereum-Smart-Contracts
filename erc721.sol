@@ -23,9 +23,9 @@ contract NFTToken is ERC721 {
     // Base URI
     string  _baseURIextended;
     
-    constructor () ERC721("Samresh", "SAM") {
-        nameNFT = "Sam";
-        nameSymbol = "SAM";
+    constructor () ERC721("NFT for ERC", "IPL") {
+        nameNFT = "IPL";
+        nameSymbol = "IPL";
     
     }
     
@@ -66,14 +66,14 @@ contract NFTToken is ERC721 {
     }
         
   
-    function Mint (string memory _tokenURI, uint256 _nftPrice) public returns (uint256)  {
+    function Mint (string memory _tokenURI) public returns (uint256)  {
         require(msg.sender != address(0));
         nftTokenURI = _tokenURI;
         // used as token id 
         nftId ++;
         // check if a token exists with the above token id => incremented counter
         require(!_exists(nftId));
-        tokenIdToValue[nftId] = _nftPrice;
+       // tokenIdToValue[nftId] = _nftPrice;
         _mint(msg.sender,nftId);
         _setTokenURI(nftId, nftTokenURI);
         
@@ -81,9 +81,9 @@ contract NFTToken is ERC721 {
         
     }
     
-    function tokenPrice (uint256 _tokenID) public view returns (uint256 nftPrice) {
+    function tokenExists (uint256 _tokenID) external view returns (bool) {
         require(!_exists(nftId));
-        nftPrice = tokenIdToValue[_tokenID]; 
+        return true ; 
     } 
     
     
