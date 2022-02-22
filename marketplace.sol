@@ -38,8 +38,9 @@ contract NFTMarketPlace {
     }
      address public contractaddress= address(this);
 
-    function nftSale(uint256 _tokenId) external {
+    function listNFTforsale(uint256 _tokenId) external {
         require(msg.sender == NFT.ownerOf(_tokenId),"Only owners can change this status");
+       // require(!NFT._exists(_tokenId),"token dose not exist"); // checking with URI if listed NFT is a valid or not
         NFTMap[_tokenId].NFTforSell = true;
         NFTMap[_tokenId].ownerOfNFT = msg.sender;
         NFTMap[_tokenId].bidingStatus =  true ;
@@ -50,8 +51,9 @@ contract NFTMarketPlace {
     function bidding(uint _tokenId , uint256 _bid) external {
         require(NFTMap[_tokenId].bidingStatus == true,"NFT is not allowed not for bid !");
         require(NFT.ownerOf(_tokenId) != msg.sender,"sorry, Owner can not bid !") ;
-        require(_bid > 0 , "bid less than 0") ;
-       
+        require(_bid > 0 , "bid should be greater than 0") ;
+        require(_bid <= token.balanceOf(msg.sender),"bidder balance is less than bid"); //check balance before bid 
+        // to be check bidding should be allowed by allowence peple
        if ( _bid > NFTMap[_tokenId].NFTheigestBid) {
            NFTMap[_tokenId].NFTheigestBid = _bid ;
            NFTMap[_tokenId].NFTHeigestBidder = msg.sender ;
@@ -60,26 +62,30 @@ contract NFTMarketPlace {
     }
 
     function stopBid(uint256 _tokenId ) external {
-        require(); //only owner can stop bidding. 
+        require(msg.sender == NFTMap[_tokenId].ownerOfNFT,"only owner can stop the bidding " ); //only owner can stop bidding. 
         NFTMap[_tokenId].bidingStatus =  false ;
     }
 
-    function getHeigestBid(uint256 _tokenId) view public returns (address,uint256) {
-            return (NFTMap[_tokenId].NFTHeigestBidder , NFTMap[_tokenId].NFTheigestBid );
+    function getHeigestBid(uint256 _tokenId) view public returns (address,uint256,bool) {
+            return ( NFTMap[_tokenId].NFTHeigestBidder ,
+                     NFTMap[_tokenId].NFTheigestBid,
+                     NFTMap[_tokenId].bidingStatus );
     }
    
-    function nftBuy(uint256 _tokenId) public {
+    function nftBuy(uint256 _tokenId) public {   // NFT should be sold by current owner
         require(NFTMap[_tokenId].NFTforSell,"Token must be on sale first");
+        require(NFTMap[_tokenId].bidingStatus != true,"bidding not finished yet");
+        require(NFT.ownerOf(_tokenId) == msg.sender,"only owner can allow sell !") ;
 
         address nftowner=NFTMap[_tokenId].ownerOfNFT; // require msg.sender is winner
         uint nftPrice = NFTMap[_tokenId].NFTheigestBid;
-        require(token.allowance(msg.sender, address(this)) >= nftPrice, "Insufficient allowance.");
-        require(token.balanceOf(msg.sender) >= nftPrice, "Insufficient balance.");
+        require(token.allowance(NFTMap[_tokenId].NFTHeigestBidder, address(this)) >= nftPrice, "Insufficient allowance.");
+        require(token.balanceOf(NFTMap[_tokenId].NFTHeigestBidder) >= nftPrice, "Insufficient balance.");
         
         NFTMap[_tokenId].NFTforSell = true;
 
-        token.transferFrom(msg.sender, NFT.ownerOf(_tokenId), nftPrice);
-        NFT.transferFrom(nftowner, msg.sender, _tokenId);
+        token.transferFrom(NFTMap[_tokenId].NFTHeigestBidder, NFT.ownerOf(_tokenId), nftPrice);
+        NFT.transferFrom(msg.sender, NFTMap[_tokenId].NFTHeigestBidder, _tokenId);
 
     }
 }
