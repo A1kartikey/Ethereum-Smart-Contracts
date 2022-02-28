@@ -31,6 +31,9 @@ contract NFTMarketPlace {
 
     mapping (uint256 => NFTstruct) NFTMap ;
 
+   event Bid( uint256 NFTid , string   from, uint256 amount);
+
+
     constructor (address tokenAddress, address NFTAddress)  {
         token = ERC20(tokenAddress);
         NFT = ERC721(NFTAddress);
@@ -48,7 +51,7 @@ contract NFTMarketPlace {
         NFTMap[_tokenId].NFTheigestBid = 0 ;
     }
     
-    function bidding(uint _tokenId , uint256 _bid) external {
+    function bidding(uint _tokenId , uint256 _bid, string memory _name) external {
         require(NFTMap[_tokenId].bidingStatus == true,"NFT is not allowed not for bid !");
         require(NFT.ownerOf(_tokenId) != msg.sender,"sorry, Owner can not bid !") ;
         require(_bid > 0 , "bid should be greater than 0") ;
@@ -58,6 +61,8 @@ contract NFTMarketPlace {
            NFTMap[_tokenId].NFTheigestBid = _bid ;
            NFTMap[_tokenId].NFTHeigestBidder = msg.sender ;
        }  
+
+       emit Bid (_tokenId , _name , _bid) ;
 
     }
 
