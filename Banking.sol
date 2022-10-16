@@ -1,5 +1,5 @@
 //This is a banking application sample code to do normal banking transactions
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.7;
   
 //Contract is the highest level in solidity ,Here we are defining the contract -- Infact it resembles //as class in oops
 contract Bank{
@@ -8,8 +8,8 @@ contract Bank{
     bool _switch=false; //boolean data type which can store true or false
     
 	//Declaring the construtor for the contract , Name of the constructor should be same as //contract name,Constructor will be called once during deploying
-    constructor() public {	
-        client =msg.sender; //defining owner of the contract, msg.sender is a builtin which contains //the value of the address one who deploying the contract
+    constructor() public  {	
+        client =payable(msg.sender); //defining owner of the contract, msg.sender is a builtin which contains //the value of the address one who deploying the contract
     }
 	//Defining the modifier , in simple terms we are defining custom visibility for the functions //in addtion to public,private
    modifier ifOwner(){
