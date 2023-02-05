@@ -1,90 +1,75 @@
-pragma solidity^0.5.5;
+pragma solidity ^0.8.9 ;
 
-contract VoteSystem{
+contract election {
 
- struct candidate {
-     uint voterId;
-     string name;
-     uint age;
-     uint voteCount;
- }
- 
- mapping (uint => candidate) candidateMap;
- 
- struct voters {
-     uint voterId;
-     string name;
-     uint age;
-     bool votingState;
- }
+        struct candidate {
+            uint Id ;
+            string Name ;
+            uint totalVoteCount ;
+        }
 
- mapping (uint => voters) votersMap;
- 
- modifier checkVoterVoted(uint _votersVoterId){
-     require (votersMap[_votersVoterId].votingState == false);
-     _;
- }
+        struct voter {
+            uint Id ;
+            string Name  ; 
+            bool Voted ;
+            uint age ;
+        }
 
+        mapping (uint => voter )   votersMap ;
+        mapping (uint => candidate) candidateMap ;
 
-uint[] voterIdlist;
-uint[] candidateIdList;
+        uint[] votercount ;
 
+        function enrollCandidate(uint _id , string memory _name) public {
 
- function enrollCandidate(uint _voterId,string memory _name,uint  _age )  public {
+            require(candidateMap[_id].Id  != _id ) ;
+            candidateMap[_id].Id = _id ;
+            candidateMap[_id].Name = _name ; 
+            candidateMap[_id].totalVoteCount = 0 ;
+        } 
 
- require (_age >= 25); 
- require (candidateMap[_voterId].voterId != _voterId);
+        function getCandidateDetails(uint _id) view public returns(uint,string memory,uint){
+            
+            return (candidateMap[_id].Id,
+                    candidateMap[_id].Name,
+                    candidateMap[_id].totalVoteCount) ;
 
-    candidateMap[_voterId].voterId = _voterId;
-    candidateMap[_voterId].name = _name;
-    candidateMap[_voterId].age = _age;
-    
-    candidateIdList.push(_voterId);
- } 
+        }
 
- function enrollVoter(uint _voterId,string memory _name,uint _age)  public {
+        function enrollVoter(uint _id , uint _age , string memory _name) public {
+            require(votersMap[_id].Id  != _id , "Id alredy Exists ! ") ;
+            require(_age >= 18 ,"Your Age is below 18. " ) ;
+            votersMap[_id].Id = _id ;
+            votersMap[_id].Name = _name ; 
+            votersMap[_id].Voted = false;
+            votersMap[_id].age = _age ; 
 
-require (_age >= 18);
-require (votersMap[_voterId].voterId != _voterId);
+            votercount.push(_id) ;
+        } 
 
-     votersMap[_voterId].voterId = _voterId;
-     votersMap[_voterId].name = _name;
-     votersMap[_voterId].age = _age;
-     
-     voterIdlist.push(_voterId);
- }
- 
- function getCandidateDetails(uint _voterId) view public returns(uint,string memory,uint,uint) {
+    function getVoterDetails(uint _id) view public returns(uint,string memory,bool){
+            
+            return (votersMap[_id].Id,
+                    votersMap[_id].Name,
+                    votersMap[_id].Voted) ;
 
-     return (candidateMap[_voterId].voterId,candidateMap[_voterId].name,candidateMap[_voterId].age,candidateMap[_voterId].voteCount);
- }
- 
- function getVoterDetails(uint _voterId) view public returns (uint,string memory,uint,bool){
-     
-     return (votersMap[_voterId].voterId,votersMap[_voterId].name,votersMap[_voterId].age,votersMap[_voterId].votingState);
-     
- }
- 
- function vote(uint _candidateVoterId,uint _votersVoterId) public checkVoterVoted(_votersVoterId) {
-     candidateMap[_candidateVoterId].voteCount += 1;
-     votersMap[_votersVoterId].votingState = true;
- }
- 
- function getVotecountOf(uint _voterId) view public returns(uint){
-     return candidateMap[_voterId].voteCount;
- }
- 
- function getVoterList() view public returns (uint[] memory){
+        }
 
-    return   voterIdlist;  
-    }
-    
- function getCandidateList() view public returns(uint[] memory){
-     
- 
- return candidateIdList;    
- }   
+        function vote(uint _candidateId , uint _voterId) public {
 
-    
+            candidateMap[_candidateId].totalVoteCount++ ;
+            votersMap[_voterId].Voted = true ;
+
+        }
+
+        function getAllVoterIds() view public returns (uint[] memory) {
+
+            return votercount ; 
+        }
+
+        function getAllVoterIdsCount() view public returns (uint) {
+
+            return votercount.length ; 
+        }
 }
 
